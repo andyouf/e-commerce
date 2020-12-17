@@ -56,7 +56,6 @@ const getAllCarts = asyncHandler(async (req, res) => {
 // @access  Private
 const updateCart = asyncHandler(async (req, res) => {
   const quantity = req.body.quantity
-  console.log('called', quantity)
   const productID = req.params.productID
   const query = { user: req.user._id }
   try {
@@ -92,8 +91,6 @@ const deleteCart = asyncHandler(async (req, res) => {
     throw new Error(err)
   }
 })
-
-
 
 export {
   addProduct,
