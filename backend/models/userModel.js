@@ -9,9 +9,6 @@ const userSchema = mongoose.Schema(
     },
     email: {
       type: String,
-      required: () => {
-        return this.provider !== 'email' ? false : true;
-      }
     },
     password: {
       type: String,
@@ -31,6 +28,8 @@ const userSchema = mongoose.Schema(
       type: String,
       unique: true
     },
+    resetPasswordToken: { type: String },
+    resetPasswordExpires: { type: Date }
   },
   {
     timestamps: true,

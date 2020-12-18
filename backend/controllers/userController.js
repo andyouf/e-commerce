@@ -1,6 +1,11 @@
 import asyncHandler from 'express-async-handler'
 import generateToken from '../utils/generateToken.js'
 import User from '../models/userModel.js'
+import crypto from 'crypto'
+import sendEmailtoUser from '../utils/mailgun.js'
+import bcrypt from 'bcryptjs';
+
+
 
 // @desc    Auth user & get token
 // @route   POST /api/users/login
@@ -81,7 +86,6 @@ const getUserProfile = asyncHandler(async (req, res) => {
 // @access  Private
 const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id)
-
   if (user) {
     user.name = req.body.name || user.name
     user.email = req.body.email || user.email
@@ -90,7 +94,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     }
 
     const updatedUser = await user.save()
-
+    console.log(updateUser)
     res.json({
       _id: updatedUser._id,
       name: updatedUser.name,
@@ -190,6 +194,118 @@ const GoogleAuth = asyncHandler(async (req, res) => {
   res.send(htmlWithEmbeddedJWT)
 })
 
+// @desc    Forgot Password
+// @route   POST /api/users/forgot
+// @access  public
+const forgotPassword = asyncHandler(async (req, res) => {
+  const email = req.body.email
+
+  if(!email) {
+    res.status(404)
+    throw new Error("You must enter an email address.")
+  }
+
+  try {
+    const user = await User.findOne({email})
+    if(!user) {
+      res.status(404)
+      throw new Error("Your request could not be processed as entered. Please try again.")
+    }
+
+    crypto.randomBytes(48, (err, buffer) => {
+      const resetToken = buffer.toString('hex')
+      if(err) {
+        res.status(404)
+        throw new Error('Your request could not be processed. Please try again')
+      }
+
+      user.resetPasswordToken = resetToken;
+      user.resetPasswordExpires = Data.now() + 3600000
+
+      user.save(async err => {
+        if(err) {
+          res.status(404)
+          throw new Error('Your request could not be processed. Please try again')
+        }
+
+        await sendEmailtoUser(
+          user.email, 
+          'reset',
+          req.header.host,
+          resetToken
+        )
+
+        res.status(200).json({
+          success: true,
+          message:
+            'Please check your email for the link to reset your password.'
+        });
+      })
+    })
+
+
+  } catch(err) {
+    res.status(404)
+    throw new Error(err)
+  }
+})
+
+// @desc    Reset Password by Token
+// @route   POST /api/users/reset/:token
+// @access  public
+const resetPassword = asyncHandler(async (req, res) => {
+  const password = req.body.password;
+
+  if (!password) {
+    return res.status(400).json({ message: 'You must enter a password.' });
+  }
+
+  const resetUser = await User.findOne({
+    resetPasswordToken: req.params.token,
+    resetPasswordExpires: { $gt: Date.now() }
+  })
+
+  if(!resetUser) {
+    return res.status(400).json({
+      message:
+        'Your token has expired. Please attempt to reset your password again.'
+    });
+  }
+
+  bcrypt.genSalt(10, (err, salt) => {
+    bcrypt.hash(req.body.password, salt, (err, hash) => {
+      if (err) {
+        return res.status(400).json({
+          error:
+            'Your request could not be processed as entered. Please try again.'
+        });
+      }
+      req.body.password = hash;
+
+      resetUser.password = req.body.password;
+      resetUser.resetPasswordToken = undefined;
+      resetUser.resetPasswordExpires = undefined;
+
+      resetUser.save(async err => {
+        if (err) {
+          return res.status(400).json({
+            error:
+              'Your request could not be processed as entered. Please try again.'
+          });
+        }
+
+        await sendEmailtoUser(resetUser.email, 'reset-confirmation');
+
+        res.status(200).json({
+          success: true,
+          message:
+            'Password changed successfully. Please login with your new password.'
+        });
+      });
+    });
+  });
+})
+
 export {
   authUser,
   registerUser,
@@ -199,5 +315,7 @@ export {
   deleteUser,
   getUserById,
   updateUser,
-  GoogleAuth
+  GoogleAuth,
+  forgotPassword,
+  resetPassword
 }

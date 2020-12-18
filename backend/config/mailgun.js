@@ -1,0 +1,26 @@
+import Mailgun from 'mailgun-js'
+
+const sendEmail = (recipient, message) => {
+  const mailgun = Mailgun({
+    apiKey: process.env.MAILGUN_KEY,
+    domain: process.env.MAILGUN_DOMAIN
+  })
+  return new Promise((resolve, reject) => {
+    const data = {
+      from : 'Andrew E-Commerce',
+      to: recipient,
+      subject: message.subject,
+      text: message.text
+    }
+
+    mailgun.messages().send(data, (err, body) => {
+      if(err) {
+        reject(err)
+      } else {
+        resolve(body)
+      }
+    })
+  })
+}
+
+export default sendEmail

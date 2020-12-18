@@ -1,7 +1,6 @@
 import express from 'express'
 import passport from 'passport'
 const router = express.Router()
-
 import {
   authUser,
   registerUser,
@@ -11,7 +10,9 @@ import {
   deleteUser,
   getUserById,
   updateUser,
-  GoogleAuth
+  GoogleAuth,
+  forgotPassword,
+  resetPassword
 } from '../controllers/userController.js'
 import { protect, admin } from '../middleware/authMiddleware.js'
 
@@ -20,6 +21,9 @@ router.post('/login', authUser)
   .route('/profile')
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile)
+
+router.post('/forgot', forgotPassword)
+router.post('/reset/:token', resetPassword)
 
 router.get(
   '/google',

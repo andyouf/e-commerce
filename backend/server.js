@@ -1,23 +1,22 @@
 import path from 'path'
 import express from 'express'
 import dotenv from 'dotenv'
-import colors from 'colors'
+dotenv.config()
 import morgan from 'morgan'
+import passport from 'passport'
 import { notFound, errorHandler } from './middleware/errorMiddleware.js'
 import connectDB from './config/db.js'
-
 import productRoutes from './routes/productRoutes.js'
 import categoryRoutes from './routes/categoryRoutes.js'
 import userRoutes from './routes/userRoutes.js'
 import orderRoutes from './routes/orderRoutes.js'
 import uploadRoutes from './routes/uploadRoutes.js'
 import cartRoutes from './routes/cartRoutes.js'
-
-dotenv.config()
-
 connectDB()
 
 const app = express()
+app.use(passport.initialize());
+
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))
@@ -54,11 +53,11 @@ if (process.env.NODE_ENV === 'production') {
 app.use(notFound)
 app.use(errorHandler)
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT
 
 app.listen(
   PORT,
   console.log(
-    `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold
+    `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`
   )
 )
