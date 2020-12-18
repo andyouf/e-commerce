@@ -8,7 +8,7 @@ import Product from '../models/productModel.js'
 const addProduct = asyncHandler(async (req, res) => {
   if(!req.user) {
     res.status(404).json({
-      msg: 'No registered user'
+      message: 'No registered user'
     })
     return
   }
@@ -18,7 +18,7 @@ const addProduct = asyncHandler(async (req, res) => {
   const totalPrice = selectedProduct.price * quantity;
   if(quantity > selectedProduct.countInStock) {
     res.status(404).json({
-      msg: 'There isn\'t enough inventory',
+      message: 'There isn\'t enough inventory',
       quantity: selectedProduct.countInStock
     });
     return
@@ -46,7 +46,9 @@ const addProduct = asyncHandler(async (req, res) => {
 // @access  Private
 const getCarts = asyncHandler(async (req, res) => {
   if(!req.user) {
-    res.status(404).send('No registered user')
+    res.status(404).json({
+      message: 'No registered user'
+    })
     return
   }
   const user = req.user._id
@@ -64,7 +66,9 @@ const getCarts = asyncHandler(async (req, res) => {
 // @access  Private
 const getAllCarts = asyncHandler(async (req, res) => {
   if(!req.user) {
-    res.status(404).send('No registered user')
+    res.status(404).json({
+      message: 'No registered user'
+    })
     return
   }
   const user = req.user._id
@@ -82,7 +86,9 @@ const getAllCarts = asyncHandler(async (req, res) => {
 // @access  Private
 const updateCart = asyncHandler(async (req, res) => {
   if(!req.user) {
-    res.status(404).send('No registered user')
+    res.status(404).json({
+      message: 'No registered user'
+    })
     return
   }
   const quantity = req.body.quantity
@@ -91,7 +97,7 @@ const updateCart = asyncHandler(async (req, res) => {
   const selectedProduct = await Product.findOne({_id: productID})
   if(quantity > selectedProduct.countInStock) {
     res.status(404).json({
-      msg: 'There isn\'t enough inventory',
+      message: 'There isn\'t enough inventory',
       quantity: selectedProduct.countInStock
     });
     return
@@ -123,7 +129,9 @@ const updateCart = asyncHandler(async (req, res) => {
 // @access  Private
 const deleteCart = asyncHandler(async (req, res) => {
   if(!req.user) {
-    res.status(404).send('No registered user')
+    res.status(404).json({
+      message: 'No registered user'
+    })
     return
   }
   const productID = req.params.productId

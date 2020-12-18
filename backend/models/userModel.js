@@ -9,17 +9,27 @@ const userSchema = mongoose.Schema(
     },
     email: {
       type: String,
-      required: true,
-      unique: true,
+      required: () => {
+        return this.provider !== 'email' ? false : true;
+      }
     },
     password: {
       type: String,
       required: true,
     },
+    provider: {
+      type: String,
+      required: true,
+      default: 'email'
+    },
     isAdmin: {
       type: Boolean,
       required: true,
       default: false,
+    },
+    googleId: {
+      type: String,
+      unique: true
     },
   },
   {

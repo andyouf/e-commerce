@@ -166,6 +166,30 @@ const updateUser = asyncHandler(async (req, res) => {
   }
 })
 
+// @desc    Google Account Login
+// @route   PUT /api/users/google/callback
+// @access  Private/Google Account
+const GoogleAuth = asyncHandler(async (req, res) => {
+  const user = {
+    email: req.user.email,
+    name: req.user.name,
+    _id: req.user._id,
+    token: generateToken(req.user._id)
+  }
+  const htmlWithEmbeddedJWT = `
+    <html>
+      <script>
+        // Save JWT to localStorage
+        window.localStorage.setItem('userInfo', '${user}');
+        // Redirect browser to root of application
+        window.location.href = '/auth/success';
+      </script>
+    </html>
+  `
+
+  res.send(htmlWithEmbeddedJWT)
+})
+
 export {
   authUser,
   registerUser,
@@ -175,4 +199,5 @@ export {
   deleteUser,
   getUserById,
   updateUser,
+  GoogleAuth
 }
