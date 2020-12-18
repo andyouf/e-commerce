@@ -12,14 +12,8 @@ const CartItemSchema = mongoose.Schema({
   priceWithTax: {
     type: Number,
     default: 0
-  },
-  status: {
-    type: String,
-    default: 'Not processed',
-    enum: ['Not processed', 'Processing', 'Shipped', 'Delivered', 'Cancelled']
   }
 })
-
 
 // Cart Schema
 const CartSchema = mongoose.Schema({
@@ -28,8 +22,8 @@ const CartSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
-  updated: Date,
   created: {
+  updated: Date,
     type: Date,
     default: Date.now
   },
