@@ -1,5 +1,10 @@
 import Mailgun from 'mailgun-js'
 
+/**
+ * 
+ * @param {email} recipient the email of the recipient 
+ * @param {string} message message for him to get
+ */
 const sendEmail = (recipient, message) => {
   const mailgun = Mailgun({
     apiKey: process.env.MAILGUN_KEY,

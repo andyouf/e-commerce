@@ -1,4 +1,7 @@
 import mongoose from 'mongoose'
+/**
+ * This conencts the Backend to the DB.
+ */
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI, {

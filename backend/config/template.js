@@ -1,3 +1,4 @@
+// All kinds of mail templates the users will get from the Server
 const resetEmail = (host, resetToken) => {
   const message = {
     subject: 'Reset Password',

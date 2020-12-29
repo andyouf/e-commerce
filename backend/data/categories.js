@@ -1,3 +1,4 @@
+//sample categories data
 const categories = [
     {
         name: 'Electronics',

@@ -8,6 +8,14 @@ import {
   orderConfirmationEmail
 } from '../config/template.js'
 
+/**
+ * 
+ * @param {string} email the recipient email 
+ * @param {string} type the type of email
+ * @param {string} host host name
+ * @param {string} data content of the email
+ * This function is to send email to the users' mailbox
+ */
 const sendEmailtoUser = async (email, type, host, data) => {
   let result
   let response

@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs'
-
+//sample users data
 const users = [
   {
     name: 'Admin User',

@@ -1,5 +1,8 @@
 import mongoose from 'mongoose'
 
+/**
+ * Product Schema
+ */
 const reviewSchema = mongoose.Schema(
   {
     name: { type: String, required: true },

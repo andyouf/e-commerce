@@ -2,6 +2,9 @@ import jwt from 'jsonwebtoken'
 import asyncHandler from 'express-async-handler'
 import User from '../models/userModel.js'
 
+/**
+ * the middleware to get the user's info from the token
+ */
 const protect = asyncHandler(async (req, res, next) => {
   let token
 
@@ -29,6 +32,13 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 })
 
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * the middleware to check if the user is admin or not
+ */
 const admin = (req, res, next) => {
   if (req.user && req.user.isAdmin) {
     next()
