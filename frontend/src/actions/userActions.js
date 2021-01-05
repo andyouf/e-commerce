@@ -55,6 +55,7 @@ export const login = (email, password) => async (dispatch, getState) => {
       type: USER_LOGIN_SUCCESS,
       payload: data,
     })
+
     const { userInfo } = getState().userLogin
 
     const { cartItems } = getState().cart
@@ -99,7 +100,7 @@ export const logout = () => (dispatch, getState) => {
   document.location.href = '/login'
 }
 
-export const register = (name, email, password) => async (dispatch) => {
+export const register = (name, email, password) => async (dispatch, getState) => {
   try {
     dispatch({
       type: USER_REGISTER_REQUEST,
@@ -126,6 +127,26 @@ export const register = (name, email, password) => async (dispatch) => {
       type: USER_LOGIN_SUCCESS,
       payload: data,
     })
+
+    const { userInfo } = getState().userLogin
+
+    const { cartItems } = getState().cart
+
+    if(cartItems.length) {
+      const { data } = await axios.post('/api/carts/set', {products: cartItems}, {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        }
+      })
+      dispatch({
+        type: CART_ADD_ITEM,
+        payload: data.products,
+        logged: true
+      })
+      localStorage.removeItem('cartItems')
+    } else {
+      dispatch(getCart())
+    }
 
     localStorage.setItem('userInfo', JSON.stringify(data))
   } catch (error) {

@@ -85,8 +85,18 @@ const setCart = asyncHandler(async (req, res) => {
   }
   const user = req.user._id
   const curCart = await Cart.findOne({user: user, checkOut: false})
-  curCart.products = req.body.products
-  const newCart = await curCart.save()
+  let newCart
+  if(curCart) {
+    curCart.products = req.body.products
+    newCart = await curCart.save()
+  } else {
+    const cart = new Cart({
+      user,
+      products: req.body.products
+    })
+    
+    newCart = await cart.save();
+  }
   res.json(newCart)
 })
 

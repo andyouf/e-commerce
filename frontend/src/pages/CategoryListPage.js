@@ -23,7 +23,6 @@ const CategoryListPage = ({ history }) => {
     loading: loadingCreate,
     error: errorCreate,
     success: successCreate,
-    category: createdCategory,
   } = categoryCreate
 
   useEffect(() => {
