@@ -4,6 +4,10 @@ import { Container } from 'react-bootstrap'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import HomePage from './pages/HomePage'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
+import ProductPage from './pages/ProductPage'
+import CartPage from './pages/CartPage'
 
 function App() {
   return (
@@ -20,6 +24,10 @@ function App() {
             exact
           />
           <Route path='/category/:categoryName' component={HomePage} exact />
+          <Route path='/login' component={LoginPage} exact />
+          <Route path='/register' component={RegisterPage} exact />
+          <Route path='/product/:id' component={ProductPage} exact />
+          <Route path='/cart/:id?' component={CartPage} exact />
         </Container>
       </main>
       <Footer />

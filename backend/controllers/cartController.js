@@ -13,9 +13,9 @@ const addProduct = asyncHandler(async (req, res) => {
     return
   }
   const user = req.user._id
-  const { product, quantity } = req.body.products
-  const selectedProduct = await Product.findOne({_id: product})
-  const totalPrice = selectedProduct.price * quantity;
+  const { productId, quantity } = req.body
+  const selectedProduct = await Product.findOne({_id: productId})
+  // const totalPrice = selectedProduct.price * quantity;
   if(quantity > selectedProduct.countInStock) {
     res.status(404).json({
       message: 'There isn\'t enough inventory',
@@ -26,13 +26,30 @@ const addProduct = asyncHandler(async (req, res) => {
   const curCart = await Cart.findOne({user: user})
   let addedCart;
   if(curCart) {
-    curCart.products.push({product, quantity, totalPrice});
+    const curProduct = curCart.products.filter(product => product.productId == productId)
+    if(curProduct[0]) {
+      curProduct[0].quantity = quantity
+    } else {
+      curCart.products.push({
+        productId, 
+        quantity,
+        name: selectedProduct.name,
+        price: selectedProduct.price,
+        image: selectedProduct.image,
+        countInStock: selectedProduct.countInStock
+      });
+    }
     addedCart = await curCart.save();
   } else {
     const cart = new Cart({
       user,
       products: {
-        product, quantity, totalPrice
+        productId, 
+        quantity,
+        name: selectedProduct.name,
+        price: selectedProduct.price,
+        image: selectedProduct.image,
+        countInStock: selectedProduct.countInStock
       }
     })
   
@@ -52,13 +69,25 @@ const getCarts = asyncHandler(async (req, res) => {
     return
   }
   const user = req.user._id
-  const cart = await Cart.find({user: user, checkOut: false}).populate({
-    path: 'products',
-    populate: {
-      path: 'product',
-    }
-  })
+  const cart = await Cart.find({user: user, checkOut: false})
   res.json(cart)
+})
+
+// @desc    Set the cart with the products before the user logs in
+// @route   GET /api/carts/set
+// @access  Private
+const setCart = asyncHandler(async (req, res) => {
+  if(!req.user) {
+    res.status(404).json({
+      message: 'No registered user'
+    })
+    return
+  }
+  const user = req.user._id
+  const curCart = await Cart.findOne({user: user, checkOut: false})
+  curCart.products = req.body.products
+  const newCart = await curCart.save()
+  res.json(newCart)
 })
 
 // @desc    Get all the history of carts of the loggedin user
@@ -81,9 +110,9 @@ const getAllCarts = asyncHandler(async (req, res) => {
   res.json(carts)
 })
 
-// @desc    Update the cart with Product quantity
-// @route   POST /api/carts/update/:productID
-// @access  Private
+// @desc    Update the cart with deleted Product
+// @route   get /api/carts/delete/:productId
+// @access  Public
 const updateCart = asyncHandler(async (req, res) => {
   if(!req.user) {
     res.status(404).json({
@@ -91,33 +120,14 @@ const updateCart = asyncHandler(async (req, res) => {
     })
     return
   }
-  const quantity = req.body.quantity
-  const productID = req.params.productID
+  const productId = req.params.productId
   const query = { user: req.user._id }
-  const selectedProduct = await Product.findOne({_id: productID})
-  if(quantity > selectedProduct.countInStock) {
-    res.status(404).json({
-      message: 'There isn\'t enough inventory',
-      quantity: selectedProduct.countInStock
-    });
-    return
-  }
   try {
     const curCart = await Cart.findOne(query);
-    let id = curCart.products.map(item => item.product).indexOf(productID)
-    if(!quantity) {
-      curCart.products.splice(id, 1)
-    } else {
-      curCart.products[id].quantity = quantity
-      curCart.products[id].totalPrice = quantity * selectedProduct.price
-    }
+    let id = curCart.products.map(item => item.product).indexOf(productId)
+    curCart.products.splice(id, 1)
     const filteredCart = await curCart.save()
-    res.status(201).json(filteredCart.populate({
-      path: 'products',
-      populate: {
-        path: 'product',
-    }
-    }))
+    res.status(201).json(filteredCart)
   } catch(err) {
     res.status(404)
     throw new Error(err)
@@ -125,7 +135,7 @@ const updateCart = asyncHandler(async (req, res) => {
 })
 
 // @desc    Delete product on the cart
-// @route   DELETE /api/carts/update/:productID
+// @route   DELETE /api/carts/update/:productId
 // @access  Private
 const deleteCart = asyncHandler(async (req, res) => {
   if(!req.user) {
@@ -134,11 +144,11 @@ const deleteCart = asyncHandler(async (req, res) => {
     })
     return
   }
-  const productID = req.params.productId
+  const productId = req.params.productId
   const query = { user: req.user._id }
   try {
     const curCart = await Cart.findOne(query);
-    var id = curCart.products.map(item => item.product).indexOf(productID)
+    var id = curCart.products.map(item => item.product).indexOf(productId)
     curCart.products.splice(id, 1);
     const filteredCart = await curCart.save();
     res.status(201).json(filteredCart);
@@ -153,5 +163,6 @@ export {
   updateCart,
   deleteCart,
   getCarts,
-  getAllCarts
+  getAllCarts,
+  setCart
 }

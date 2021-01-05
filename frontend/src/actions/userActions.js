@@ -25,9 +25,13 @@ import {
   USER_UPDATE_SUCCESS,
   USER_UPDATE_REQUEST,
 } from '../constants/userConstants'
+import {
+  CART_ADD_ITEM,
+} from '../constants/cartConstants'
 import { ORDER_LIST_MY_RESET } from '../constants/orderConstants'
+import { getCart } from '../actions/cartActions'
 
-export const login = (email, password) => async (dispatch) => {
+export const login = (email, password) => async (dispatch, getState) => {
   try {
     dispatch({
       type: USER_LOGIN_REQUEST,
@@ -45,10 +49,31 @@ export const login = (email, password) => async (dispatch) => {
       config
     )
 
+    
+    
     dispatch({
       type: USER_LOGIN_SUCCESS,
       payload: data,
     })
+    const { userInfo } = getState().userLogin
+
+    const { cartItems } = getState().cart
+
+    if(cartItems.length) {
+      const { data } = await axios.post('/api/carts/set', {products: cartItems}, {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        }
+      })
+      dispatch({
+        type: CART_ADD_ITEM,
+        payload: data.products,
+        logged: true
+      })
+      localStorage.removeItem('cartItems')
+    } else {
+      dispatch(getCart())
+    }
 
     localStorage.setItem('userInfo', JSON.stringify(data))
   } catch (error) {
@@ -62,9 +87,9 @@ export const login = (email, password) => async (dispatch) => {
   }
 }
 
-export const logout = () => (dispatch) => {
+export const logout = () => (dispatch, getState) => {
+  localStorage.setItem('cartItems', JSON.stringify(getState().cart.cartItems))
   localStorage.removeItem('userInfo')
-  localStorage.removeItem('cartItems')
   localStorage.removeItem('shippingAddress')
   localStorage.removeItem('paymentMethod')
   dispatch({ type: USER_LOGOUT })

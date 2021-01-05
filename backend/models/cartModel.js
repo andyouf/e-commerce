@@ -4,14 +4,15 @@ import mongoose from 'mongoose';
  * Cart Schema
  */
 const CartItemSchema = mongoose.Schema({
-  product: {
+  productId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product'
   },
   quantity: Number,
-  totalPrice: {
-    type: Number
-  },
+  price: Number,
+  name: String,
+  image: String,
+  countInStock: Number,
   priceWithTax: {
     type: Number,
     default: 0

@@ -77,3 +77,37 @@ h2 {
 .card {
   min-height: 385px !important;
 }
+
+.signup-provider {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+a {
+  text-decoration: none !important;
+}
+
+.btn-text {
+  padding-left: 5px;
+}
+
+.google-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 12px 20px;
+  margin-top: 15px;
+  width: 300px;
+  max-width: 350px;
+  border: 1px solid #eceef3;
+  border-radius: 3px;
+}
+
+.google-icon {
+  width: 30px;
+  height: 30px;
+}

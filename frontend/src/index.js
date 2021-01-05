@@ -6,10 +6,15 @@ import './bootstrap.min.css'
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker'
-
+import dotenv from 'dotenv'
+import ContentProvider from './components/ContentProvider';
+dotenv.config()
+console.log(process.env)
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <ContentProvider>
+      <App />
+    </ContentProvider>
   </Provider>,
   document.getElementById('root')
 );

@@ -1,12 +1,14 @@
+import dotenv from 'dotenv'
+dotenv.config()
 import passport from 'passport'
-import { Strategy as GoogleStrategy } from 'passport-google-oauth2'
+import Strategy from 'passport-google-oauth2'
 import User from '../models/userModel.js'
 
 /**
  * Google Auth Part
  */
 passport.use(
-  new GoogleStrategy({
+  new Strategy({
     clientID : process.env.GOOGLE_CLIENT_ID,
     clientSecret : process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: `${process.env.BASE_SERVER_URL}/${process.env.GOOGLE_CALLBACK_URL}`

@@ -23,6 +23,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.use(express.json())
+import './config/passport.js'
 
 app.use('/api/products', productRoutes)
 app.use('/api/categories', categoryRoutes)

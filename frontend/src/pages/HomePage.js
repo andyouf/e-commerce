@@ -7,7 +7,7 @@ import Message from '../components/Message.js'
 import Loader from '../components/Loader'
 import Paginate from '../components/Paginate.js'
 import ProductCarousel from '../components/ProductCarousel'
-// import Meta from '../components/Meta'
+import Meta from '../components/Meta'
 import { listProducts } from '../actions/productActions'
 
 const HomePage = ({ match }) => {
@@ -32,7 +32,7 @@ const HomePage = ({ match }) => {
 
   return (
     <>
-      {/* <Meta /> */}
+      <Meta />
       {!keyword ? (
         <ProductCarousel categoryId={categoryId}/>
       ) : (

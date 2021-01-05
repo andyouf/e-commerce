@@ -60,7 +60,7 @@ const getProductsByCategory = asyncHandler(async (req, res) => {
 // @route   GET /api/products/:id
 // @access  Public
 const getProductById = asyncHandler(async (req, res) => {
-  const product = await Product.findById(req.params.id)
+  const product = await Product.findById(req.params.id).populate('category', 'name')
 
   if (product) {
     res.json(product)

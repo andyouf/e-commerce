@@ -39,8 +39,8 @@ const Header = () => {
                 <Nav.Link>
                   <i className='fas fa-shopping-cart'></i> Cart
                   {
-                    cartItems.length > 0 && 
-                    <span className="cart-badge">{cartItems.reduce((acc, item) => acc + item.qty, 0)}</span>
+                    cartItems && cartItems.length > 0 && 
+                    <span className="cart-badge">{cartItems.reduce((acc, item) => acc + item.quantity, 0)}</span>
                   }
                 </Nav.Link>
               </LinkContainer>
