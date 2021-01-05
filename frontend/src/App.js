@@ -8,6 +8,13 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import ProductPage from './pages/ProductPage'
 import CartPage from './pages/CartPage'
+import ProfilePage from './pages/ProfilePage'
+import UserListPage from './pages/UserListPage'
+import UserEditPage from './pages/UserEditPage'
+import ProductListPage from './pages/ProductListPage'
+import ProductEditPage from './pages/ProductEditPage'
+import CategoryListPage from './pages/CategoryListPage'
+import CategoryEditPage from './pages/CategoryEditPage'
 
 function App() {
   return (
@@ -28,6 +35,38 @@ function App() {
           <Route path='/register' component={RegisterPage} exact />
           <Route path='/product/:id' component={ProductPage} exact />
           <Route path='/cart/:id?' component={CartPage} exact />
+          <Route path='/profile' component={ProfilePage} exact />
+          <Route path='/admin/userlist' component={UserListPage} />
+          <Route path='/admin/user/:id/edit' component={UserEditPage} />
+          <Route
+            path='/admin/productlist'
+            component={ProductListPage}
+            exact
+          />
+          <Route
+            path='/admin/productlist/:pageNumber'
+            component={ProductListPage}
+            exact
+          />
+          <Route path='/admin/product/:id/edit' component={ProductEditPage} />
+          <Route 
+            path='/admin/product/create' 
+            render={
+              (props) => <ProductEditPage {...props} isCreate={true}/>
+            } 
+          />
+           <Route
+            path='/admin/categorylist'
+            component={CategoryListPage}
+            exact
+          />
+          <Route path='/admin/category/:id/edit' component={CategoryEditPage} />
+          <Route 
+            path='/admin/category/create' 
+            render={
+              (props) => <CategoryEditPage {...props} isCreate={true}/>
+            } 
+          />
         </Container>
       </main>
       <Footer />

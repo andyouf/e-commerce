@@ -10,6 +10,20 @@ const getCategories = asyncHandler(async (req, res) => {
   res.json({categories});
 })
 
+// @desc    Fetch single category
+// @route   GET /api/categories/:id
+// @access  Public
+const getCategoryById = asyncHandler(async (req, res) => {
+  const category = await Category.findById(req.params.id)
+
+  if (category) {
+    res.json(category)
+  } else {
+    res.status(404)
+    throw new Error('Category not found')
+  }
+})
+
 // @desc    Add Category by Admin
 // @route   POST /api/categories
 // @access  Private/Admin
@@ -70,5 +84,6 @@ export {
   getCategories,
   deleteCategory,
   createCategory,
-  updateCategory
+  updateCategory,
+  getCategoryById
 }

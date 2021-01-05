@@ -75,7 +75,12 @@ h2 {
 }
 
 .card {
-  min-height: 385px !important;
+  min-height: 450px !important;
+}
+
+.card-img-top {
+  width: 210px;
+  height: 210px;
 }
 
 .signup-provider {
