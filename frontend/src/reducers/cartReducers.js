@@ -24,7 +24,7 @@ export const cartReducer = (
           cartItems: item
         }
       } else {
-        const existItem = state.cartItems.find((x) => x.productId == item.product)
+        const existItem = state.cartItems.find((x) => x.productId == item.productId)
         console.log(existItem)
         if (existItem) {
           return {
