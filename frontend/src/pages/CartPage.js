@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { Row, Col, ListGroup, Image, Form, Button, Card } from 'react-bootstrap'
 import Message from '../components/Message'
 import { addToCart, removeFromCart } from '../actions/cartActions'
+import TakeMoney from '../components/TakeMoney'
+import { createOrder } from '../actions/orderActions'
 
-const CartPage = ({ match, location, history }) => {
+const CartPage = () => {
 
   const dispatch = useDispatch()
 
@@ -16,9 +18,45 @@ const CartPage = ({ match, location, history }) => {
     dispatch(removeFromCart(id))
   }
 
-  const checkoutHandler = () => {
-    history.push('/login?redirect=shipping')
+  
+  //   Calculate prices
+  const addDecimals = (num) => {
+    return (Math.round(num * 100) / 100).toFixed(2)
   }
+  
+  const itemsPrice = useMemo(() => {
+    return addDecimals(cartItems
+    .reduce((acc, item) => acc + item.quantity * item.price, 0))
+  }, [cartItems])
+
+  const taxPrice = useMemo(() => {
+    return addDecimals(cartItems
+    .reduce((acc, item) => acc + item.priceWithTax * item.quantity * item.price, 0))
+  }, [cartItems])
+
+  const shippingPrice = addDecimals(itemsPrice > 100 ? 0 : 100)
+  const totalPrice = (
+    Number(itemsPrice) +
+    Number(shippingPrice) +
+    Number(taxPrice)
+  ).toFixed(2)
+
+
+  const handleCheckout = useCallback((address, recipient, paymentMethod, paymentResult) => {
+    dispatch(
+      createOrder({
+        recipient,
+        orderItems: cartItems,
+        shippingAddress: address,
+        paymentMethod,
+        paymentResult,
+        itemsPrice: itemsPrice,
+        shippingPrice: shippingPrice,
+        taxPrice: taxPrice,
+        totalPrice: totalPrice,
+      })
+    )
+  }, [cartItems, dispatch, itemsPrice, taxPrice, totalPrice, shippingPrice])
 
   return (
     <Row>
@@ -80,20 +118,37 @@ const CartPage = ({ match, location, history }) => {
                 Subtotal ({cartItems.reduce((acc, item) => acc + item.quantity, 0)})
                 items
               </h2>
-              $
-              {cartItems
-                .reduce((acc, item) => acc + item.quantity * item.price, 0)
-                .toFixed(2)}
             </ListGroup.Item>
             <ListGroup.Item>
-              <Button
-                type='button'
-                className='btn-block'
-                disabled={cartItems.length === 0}
-                onClick={checkoutHandler}
-              >
-                Proceed To Checkout
-              </Button>
+                <Row>
+                  <Col>Items</Col>
+                  <Col>${itemsPrice}</Col>
+                </Row>
+              </ListGroup.Item>
+              <ListGroup.Item>
+                <Row>
+                  <Col>Shipping</Col>
+                  <Col>${shippingPrice}</Col>
+                </Row>
+              </ListGroup.Item>
+              <ListGroup.Item>
+                <Row>
+                  <Col>Tax</Col>
+                  <Col>${taxPrice}</Col>
+                </Row>
+              </ListGroup.Item>
+              <ListGroup.Item>
+                <Row>
+                  <Col>Total</Col>
+                  <Col>${totalPrice}</Col>
+                </Row>
+              </ListGroup.Item>
+            <ListGroup.Item className="text-center">
+              <TakeMoney 
+                products={cartItems}
+                handleCheckout={handleCheckout}
+                total={totalPrice}
+              />
             </ListGroup.Item>
           </ListGroup>
         </Card>

@@ -36,7 +36,8 @@ const addProduct = asyncHandler(async (req, res) => {
         name: selectedProduct.name,
         price: selectedProduct.price,
         image: selectedProduct.image,
-        countInStock: selectedProduct.countInStock
+        countInStock: selectedProduct.countInStock,
+        priceWithTax: selectedProduct.priceWithTax || 0
       });
     }
     addedCart = await curCart.save();

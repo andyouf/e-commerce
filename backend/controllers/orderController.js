@@ -1,5 +1,10 @@
 import asyncHandler from 'express-async-handler'
 import Order from '../models/orderModel.js'
+import dotenv from 'dotenv'
+dotenv.config()
+import Stripe from 'stripe'
+const stripe = Stripe(process.env.STRIPE_TEST_API_KEY)
+import {v4 as uuid} from 'uuid'
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -114,6 +119,77 @@ const getOrders = asyncHandler(async (req, res) => {
   res.json(orders)
 })
 
+// @desc    stripe checkout
+// @route   GET /api/orders/stripecheckout
+// @access  public
+const stripeCheckout = asyncHandler(async (req, res) => {
+  let error
+  let status
+  let shippingAddress
+  let buyer, paymentMethod, paymentResult
+  try {
+    const { products, token } = req.body
+    const description = products.reduce((desc, product, index) => {
+      let prefix = ''
+      if((index + 1) === products.length) prefix = ' and '
+      else if(index) prefix = ', '
+      return desc + prefix + product.name
+    }, '')
+
+
+    const customer = await stripe.customers.create({
+      email: token.email,
+      source: token.id
+    })
+
+    const idempotency_key = uuid()
+    const charge = await stripe.charges.create(
+      {
+        amount: 100,
+        currency: 'usd',
+        customer: customer.id,
+        receipt_email: token.email,
+        description: `Purchased the ${description}`,
+        shipping: {
+          name: token.card.name,
+          address: {
+            line1: token.card.address_line1,
+            line2: token.card.address_line2,
+            city: token.card.address_city,
+            country: token.card.address_country,
+            postal_code: token.card.address_zip
+          }
+        }
+      },
+      {
+        idempotency_key
+      }
+    )
+    console.log('Charge:', {charge})
+    status = 'success'
+    shippingAddress = {
+      address: charge.shipping.address.line1 || charge.shipping.address.line2,
+      city: charge.shipping.address.city,
+      postalCode : charge.shipping.address.postal_code,
+      country: charge.shipping.address.country
+    }
+    buyer = charge.shipping.name
+    paymentMethod = charge.payment_method_details.card.brand
+    paymentResult = {
+      id : charge.payment_method,
+      status: charge.paid,
+      email_address: charge.receipt_email,
+      update_time: new Date(charge.created * 1000)
+    }
+  } catch (error) {
+    console.error('Error:', error)
+    status = 'failure'
+  }
+  res.json({error, status, address: shippingAddress, recipient: buyer, paymentMethod, paymentResult})
+})
+
+
+
 export {
   addOrderItems,
   getOrderById,
@@ -121,4 +197,5 @@ export {
   updateOrderToDelivered,
   getMyOrders,
   getOrders,
+  stripeCheckout
 }

@@ -15,6 +15,7 @@ import ProductListPage from './pages/ProductListPage'
 import ProductEditPage from './pages/ProductEditPage'
 import CategoryListPage from './pages/CategoryListPage'
 import CategoryEditPage from './pages/CategoryEditPage'
+// import ShippingPage from './pages/ShippingPage'
 
 function App() {
   return (
@@ -67,6 +68,7 @@ function App() {
               (props) => <CategoryEditPage {...props} isCreate={true}/>
             } 
           />
+          {/* <Route path='/shipping' component={ShippingPage} /> */}
         </Container>
       </main>
       <Footer />

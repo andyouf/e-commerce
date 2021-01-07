@@ -19,6 +19,7 @@ const ProductEditPage = ({ match, history, isCreate }) => {
   const [brand, setBrand] = useState('')
   const [category, setCategory] = useState('')
   const [countInStock, setCountInStock] = useState(0)
+  const [tax, setTax] = useState(0)
   const [description, setDescription] = useState('')
   const [uploading, setUploading] = useState(false)
 
@@ -62,6 +63,7 @@ const ProductEditPage = ({ match, history, isCreate }) => {
           setBrand(product.brand)
           setCategory(product.category)
           setCountInStock(product.countInStock)
+          setTax(product.priceWithTax)
           setDescription(product.description)
         }
       }
@@ -102,7 +104,8 @@ const ProductEditPage = ({ match, history, isCreate }) => {
           brand,
           category,
           description,
-          countInStock
+          countInStock,
+          priceWithTax: tax
         })
       )
     } else {
@@ -115,7 +118,8 @@ const ProductEditPage = ({ match, history, isCreate }) => {
           brand,
           category,
           description,
-          countInStock
+          countInStock,
+          priceWithTax: tax
         })
       )
     }
@@ -190,6 +194,16 @@ const ProductEditPage = ({ match, history, isCreate }) => {
                 placeholder='Enter countInStock'
                 value={countInStock}
                 onChange={(e) => setCountInStock(e.target.value)}
+              ></Form.Control>
+            </Form.Group>
+            
+            <Form.Group controlId='tax'>
+              <Form.Label>Tax</Form.Label>
+              <Form.Control
+                type='number'
+                placeholder='Enter Tax'
+                value={tax}
+                onChange={(e) => setTax(e.target.value)}
               ></Form.Control>
             </Form.Group>
 
