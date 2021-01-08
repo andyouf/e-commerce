@@ -1,5 +1,7 @@
 import asyncHandler from 'express-async-handler'
 import Order from '../models/orderModel.js'
+import Cart from '../models/cartModel.js'
+import Product from '../models/productModel.js'
 import dotenv from 'dotenv'
 dotenv.config()
 import Stripe from 'stripe'
@@ -10,10 +12,13 @@ import {v4 as uuid} from 'uuid'
 // @route   POST /api/orders
 // @access  Private
 const addOrderItems = asyncHandler(async (req, res) => {
+  // console.log('visited')
   const {
+    recipient,
     orderItems,
     shippingAddress,
     paymentMethod,
+    paymentResult,
     itemsPrice,
     taxPrice,
     shippingPrice,
@@ -27,16 +32,36 @@ const addOrderItems = asyncHandler(async (req, res) => {
   } else {
     const order = new Order({
       orderItems,
-      user: req.user._id,
+      recipient,
+      user: req.user._id || null,
       shippingAddress,
       paymentMethod,
+      paymentResult,
       itemsPrice,
       taxPrice,
       shippingPrice,
       totalPrice,
+      isPaid: true,
+      paidAt: new Date()
     })
 
     const createdOrder = await order.save()
+    orderItems.map(async (item) => {
+      console.log(item.productId)
+      const product = await Product.findById(item.productId)
+      if (product.countInStock >= item.quantity) {
+        product.countInStock -= item.quantity
+      } else {
+        product.countInStock = 0
+      }
+      await product.save()
+    })
+    
+    if(req.user && req.user._id) {
+      const curCart = await Cart.findOne({user: req.user._id, checkOut: false});
+      curCart.checkOut = true;
+      await curCart.save()
+    }
 
     res.status(201).json(createdOrder)
   }
@@ -165,7 +190,6 @@ const stripeCheckout = asyncHandler(async (req, res) => {
         idempotency_key
       }
     )
-    console.log('Charge:', {charge})
     status = 'success'
     shippingAddress = {
       address: charge.shipping.address.line1 || charge.shipping.address.line2,
@@ -182,7 +206,6 @@ const stripeCheckout = asyncHandler(async (req, res) => {
       update_time: new Date(charge.created * 1000)
     }
   } catch (error) {
-    console.error('Error:', error)
     status = 'failure'
   }
   res.json({error, status, address: shippingAddress, recipient: buyer, paymentMethod, paymentResult})

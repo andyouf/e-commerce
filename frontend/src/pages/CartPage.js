@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { Row, Col, ListGroup, Image, Form, Button, Card } from 'react-bootstrap'
@@ -6,8 +6,10 @@ import Message from '../components/Message'
 import { addToCart, removeFromCart } from '../actions/cartActions'
 import TakeMoney from '../components/TakeMoney'
 import { createOrder } from '../actions/orderActions'
+import { ORDER_CREATE_RESET } from '../constants/orderConstants'
+import { USER_DETAILS_RESET } from '../constants/userConstants'
 
-const CartPage = () => {
+const CartPage = ({history}) => {
 
   const dispatch = useDispatch()
 
@@ -34,6 +36,9 @@ const CartPage = () => {
     .reduce((acc, item) => acc + item.priceWithTax * item.quantity * item.price, 0))
   }, [cartItems])
 
+  const orderCreate = useSelector((state) => state.orderCreate)
+  const { order, success } = orderCreate
+
   const shippingPrice = addDecimals(itemsPrice > 100 ? 0 : 100)
   const totalPrice = (
     Number(itemsPrice) +
@@ -53,10 +58,26 @@ const CartPage = () => {
         itemsPrice: itemsPrice,
         shippingPrice: shippingPrice,
         taxPrice: taxPrice,
-        totalPrice: totalPrice,
+        totalPrice: totalPrice
       })
     )
-  }, [cartItems, dispatch, itemsPrice, taxPrice, totalPrice, shippingPrice])
+  }, [
+    cartItems, 
+    dispatch, 
+    itemsPrice, 
+    taxPrice, 
+    totalPrice, 
+    shippingPrice ]
+  )
+
+  useEffect(() => {
+    if (success) {
+      history.push(`/order/${order._id}`)
+      dispatch({ type: USER_DETAILS_RESET })
+      dispatch({ type: ORDER_CREATE_RESET })
+    }
+    // eslint-disable-next-line
+  }, [history, success])
 
   return (
     <Row>

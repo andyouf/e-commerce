@@ -9,13 +9,12 @@ import {
   getOrders,
   stripeCheckout
 } from '../controllers/orderController.js'
-import { protect, admin } from '../middleware/authMiddleware.js'
+import { protect, admin, filter, deliver } from '../middleware/authMiddleware.js'
 
-router.route('/').post(protect, addOrderItems).get(protect, admin, getOrders)
+router.route('/').post(filter, addOrderItems).get(protect, admin, getOrders)
 router.route('/myorders').get(protect, getMyOrders)
 router.route('/:id').get(protect, getOrderById)
-router.route('/:id/pay').put(protect, updateOrderToPaid)
-router.route('/:id/deliver').put(protect, admin, updateOrderToDelivered)
+router.route('/:id/deliver').put(protect, deliver, updateOrderToDelivered)
 router.route('/stripecheckout').post(stripeCheckout)
 
 export default router

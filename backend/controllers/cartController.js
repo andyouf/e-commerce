@@ -23,7 +23,7 @@ const addProduct = asyncHandler(async (req, res) => {
     });
     return
   }
-  const curCart = await Cart.findOne({user: user})
+  const curCart = await Cart.findOne({user: user, checkOut: false})
   let addedCart;
   if(curCart) {
     const curProduct = curCart.products.filter(product => product.productId == productId)
@@ -156,7 +156,7 @@ const deleteCart = asyncHandler(async (req, res) => {
     return
   }
   const productId = req.params.productId
-  const query = { user: req.user._id }
+  const query = { user: req.user._id, checkOut: false }
   try {
     const curCart = await Cart.findOne(query);
     var id = curCart.products.map(item => item.product).indexOf(productId)

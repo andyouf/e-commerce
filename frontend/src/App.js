@@ -15,7 +15,8 @@ import ProductListPage from './pages/ProductListPage'
 import ProductEditPage from './pages/ProductEditPage'
 import CategoryListPage from './pages/CategoryListPage'
 import CategoryEditPage from './pages/CategoryEditPage'
-// import ShippingPage from './pages/ShippingPage'
+import OrderPage from './pages/OrderPage'
+import OrderListPage from './pages/OrderListPage'
 
 function App() {
   return (
@@ -68,7 +69,8 @@ function App() {
               (props) => <CategoryEditPage {...props} isCreate={true}/>
             } 
           />
-          {/* <Route path='/shipping' component={ShippingPage} /> */}
+          <Route path='/order/:id' component={OrderPage} />
+          <Route path='/admin/orderlist' component={OrderListPage} />
         </Container>
       </main>
       <Footer />

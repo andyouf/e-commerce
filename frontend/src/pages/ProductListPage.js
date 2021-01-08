@@ -40,6 +40,7 @@ const ProductListPage = ({ history, match }) => {
   const { categories } = useSelector((state) => state.categoryList)
 
   const getCategoryName = useCallback((product) => {
+    if(!product.category) return ''
     const category = categories.filter(category => category._id == product.category._id)
     return category[0] && category[0].name
   }, [products, categories])

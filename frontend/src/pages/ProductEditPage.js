@@ -29,7 +29,7 @@ const ProductEditPage = ({ match, history, isCreate }) => {
   const { loading, error, product } = productDetails
   const productUpdate = useSelector((state) => state.productUpdate)
   const productCreate = useSelector((state) => state.productCreate)
-  const { categories } = useSelector((state) => state.categoryList)
+  const { categories, loading: isCategoryLoading } = useSelector((state) => state.categoryList)
   const {
     loading: loadingUpdate,
     error: errorUpdate,
@@ -134,7 +134,7 @@ const ProductEditPage = ({ match, history, isCreate }) => {
         <h1>{isCreate ? 'Create ' : 'Edit '} a Product</h1>
         {(loadingUpdate || loadingCreate) && <Loader />}
         {(errorUpdate || errorCreate) && <Message variant='danger'>{isCreate ? errorCreate : errorUpdate}</Message>}
-        {loading ? (
+        {loading && isCategoryLoading ? (
           <Loader />
         ) : error ? (
           <Message variant='danger'>{error}</Message>
@@ -224,6 +224,7 @@ const ProductEditPage = ({ match, history, isCreate }) => {
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
+                <option></option>
                 {
                   categories.map(category => (
                     <option key={category._id} value={category._id}>

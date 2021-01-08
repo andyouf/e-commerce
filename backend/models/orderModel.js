@@ -6,20 +6,25 @@ const orderSchema = mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
+      required: false,
       ref: 'User',
+    },
+    recipient: {
+      type: String,
+      required : true
     },
     orderItems: [
       {
         name: { type: String, required: true },
-        qty: { type: Number, required: true },
+        quantity: { type: Number, required: true },
         image: { type: String, required: true },
         price: { type: Number, required: true },
-        product: {
+        productId: {
           type: mongoose.Schema.Types.ObjectId,
           required: true,
           ref: 'Product',
         },
+        priceWithTax: { type: Number, required: true }
       },
     ],
     shippingAddress: {
@@ -47,6 +52,11 @@ const orderSchema = mongoose.Schema(
       type: Number,
       required: true,
       default: 0.0,
+    },
+    itemsPrice: {
+      type: Number,
+      required: true,
+      default: 0.0
     },
     totalPrice: {
       type: Number,
