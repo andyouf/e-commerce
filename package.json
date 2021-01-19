@@ -10,7 +10,8 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "data:import": "node backend/seeder",
     "data:destroy": "node backend/seeder -d",
-    "client": "npm start --prefix frontend"
+    "client": "npm start --prefix frontend",
+    "client:build": "npm run build --prefix frontend"
   },
   "author": "Andrew",
   "license": "MIT",
