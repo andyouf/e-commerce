@@ -34,15 +34,25 @@ const productSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    brand: {
-      type: String,
-      required: true,
-    },
+    // brand: {
+    //   type: String,
+    //   required: true,
+    // },
     category: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: 'Category'
     },
+    subCategory: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'Subcategory'
+    },
+    // generation: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   required: true,
+    //   ref: 'Generation'
+    // },
     description: {
       type: String,
       required: true,

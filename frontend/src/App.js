@@ -3,20 +3,22 @@ import { BrowserRouter as Router, Route } from 'react-router-dom'
 import { Container } from 'react-bootstrap'
 import Header from './components/Header'
 import Footer from './components/Footer'
-import HomePage from './pages/HomePage'
-import LoginPage from './pages/LoginPage'
-import RegisterPage from './pages/RegisterPage'
-import ProductPage from './pages/ProductPage'
-import CartPage from './pages/CartPage'
-import ProfilePage from './pages/ProfilePage'
-import UserListPage from './pages/UserListPage'
-import UserEditPage from './pages/UserEditPage'
-import ProductListPage from './pages/ProductListPage'
-import ProductEditPage from './pages/ProductEditPage'
-import CategoryListPage from './pages/CategoryListPage'
-import CategoryEditPage from './pages/CategoryEditPage'
-import OrderPage from './pages/OrderPage'
-import OrderListPage from './pages/OrderListPage'
+import HomePage from './pages/layout/HomePage'
+import LoginPage from './pages/auth/LoginPage'
+import RegisterPage from './pages/auth/RegisterPage'
+import ProductPage from './pages/products/ProductPage'
+import CartPage from './pages/cart/CartPage'
+import ProfilePage from './pages/profile/ProfilePage'
+import UserListPage from './pages/user/UserListPage'
+import UserEditPage from './pages/user/UserEditPage'
+import ProductListPage from './pages/products/ProductListPage'
+import ProductEditPage from './pages/products/ProductEditPage'
+import CategoryListPage from './pages/categories/CategoryListPage'
+import CategoryEditPage from './pages/categories/CategoryEditPage'
+import SubcategoryListPage from './pages/subcategories/SubcategoryListPage'
+import SubcategoryEditPage from './pages/subcategories/SubcategoryEditPage'
+import OrderPage from './pages/orders/OrderPage'
+import OrderListPage from './pages/orders/OrderListPage'
 
 function App() {
   return (
@@ -32,7 +34,7 @@ function App() {
             component={HomePage}
             exact
           />
-          <Route path='/category/:categoryName' component={HomePage} exact />
+          <Route path='/category/:categoryId' component={HomePage} exact />
           <Route path='/login' component={LoginPage} exact />
           <Route path='/register' component={RegisterPage} exact />
           <Route path='/product/:id' component={ProductPage} exact />
@@ -62,11 +64,23 @@ function App() {
             component={CategoryListPage}
             exact
           />
+           <Route
+            path='/admin/subcategorylist'
+            component={SubcategoryListPage}
+            exact
+          />
           <Route path='/admin/category/:id/edit' component={CategoryEditPage} />
           <Route 
             path='/admin/category/create' 
             render={
               (props) => <CategoryEditPage {...props} isCreate={true}/>
+            } 
+          />
+          <Route path='/admin/subcategory/:id/edit' component={SubcategoryEditPage} />
+          <Route 
+            path='/admin/subcategory/create' 
+            render={
+              (props) => <SubcategoryEditPage {...props} isCreate={true}/>
             } 
           />
           <Route path='/order/:id' component={OrderPage} />

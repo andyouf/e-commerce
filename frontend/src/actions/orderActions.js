@@ -23,7 +23,6 @@ import {
 import { logout } from './userActions'
 
 export const createOrder = (order) => async (dispatch, getState) => {
-  console.log('create order', order)
   try {
     dispatch({
       type: ORDER_CREATE_REQUEST,
@@ -33,12 +32,12 @@ export const createOrder = (order) => async (dispatch, getState) => {
       userLogin: { userInfo },
     } = getState()
 
-    const config = {
+    const config = userInfo ? {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${userInfo.token}`,
       },
-    }
+    } : {}
 
     const { data } = await axios.post(`/api/orders`, order, config)
 

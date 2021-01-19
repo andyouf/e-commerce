@@ -33,7 +33,7 @@ const addOrderItems = asyncHandler(async (req, res) => {
     const order = new Order({
       orderItems,
       recipient,
-      user: req.user._id || null,
+      user: req.user ? req.user._id : null,
       shippingAddress,
       paymentMethod,
       paymentResult,
@@ -47,7 +47,6 @@ const addOrderItems = asyncHandler(async (req, res) => {
 
     const createdOrder = await order.save()
     orderItems.map(async (item) => {
-      console.log(item.productId)
       const product = await Product.findById(item.productId)
       if (product.countInStock >= item.quantity) {
         product.countInStock -= item.quantity
@@ -206,6 +205,7 @@ const stripeCheckout = asyncHandler(async (req, res) => {
       update_time: new Date(charge.created * 1000)
     }
   } catch (error) {
+    error = error
     status = 'failure'
   }
   res.json({error, status, address: shippingAddress, recipient: buyer, paymentMethod, paymentResult})

@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Row, Col, Image, ListGroup, Card, Button, Form } from 'react-bootstrap'
-import Rating from '../components/Rating'
-import Message from '../components/Message'
-import Loader from '../components/Loader'
-import Meta from '../components/Meta'
+import Rating from '../../components/Rating'
+import Message from '../../components/Message'
+import Loader from '../../components/Loader'
+import Meta from '../../components/Meta'
 import {
   listProductDetails,
   createProductReview,
-} from '../actions/productActions'
-import { addToCart } from '../actions/cartActions'
-import { PRODUCT_CREATE_REVIEW_RESET } from '../constants/productConstants'
+} from '../../actions/productActions'
+import { addToCart } from '../../actions/cartActions'
+import { PRODUCT_CREATE_REVIEW_RESET } from '../../constants/productConstants'
 
 const ProductPage = ({ history, match }) => {
   const [qty, setQty] = useState(1)
@@ -27,11 +27,19 @@ const ProductPage = ({ history, match }) => {
   const { userInfo } = userLogin
 
   const productReviewCreate = useSelector((state) => state.productReviewCreate)
+  const { subcategories } = useSelector((state) => state.subcategoryList)
+
   const {
     success: successProductReview,
     loading: loadingProductReview,
     error: errorProductReview,
   } = productReviewCreate
+
+  const getSubcategoryName = useCallback((product) => {
+    if(!product.subCategory) return ''
+    const subcategory = subcategories.filter(subcategory => subcategory._id == product.subCategory)
+    return subcategory[0] && subcategory[0].name
+  }, [subcategories])
 
   useEffect(() => {
     if (successProductReview) {
@@ -72,10 +80,10 @@ const ProductPage = ({ history, match }) => {
         <>
           <Meta title={product.name} />
           <Row>
-            <Col md={6}>
+            <Col md={3}>
               <Image src={product.image} alt={product.name} fluid />
             </Col>
-            <Col md={3}>
+            <Col md={6}>
               <ListGroup variant='flush'>
                 <ListGroup.Item>
                   <h3>{product.name}</h3>
@@ -87,9 +95,15 @@ const ProductPage = ({ history, match }) => {
                   />
                 </ListGroup.Item>
                 <ListGroup.Item>Price: ${product.price}</ListGroup.Item>
-                <ListGroup.Item>Category: {product.category && product.category.name}</ListGroup.Item>
+                <ListGroup.Item>Model: {product.category && product.category.name}</ListGroup.Item>
+                <ListGroup.Item>Generation: {product.subCategory && getSubcategoryName(product)}</ListGroup.Item>
                 <ListGroup.Item>
-                  Description: {product.description}
+                  <>
+                    <p>Description: </p>
+                    <ul>
+                      <div dangerouslySetInnerHTML={{ __html: product.description }} />
+                    </ul>
+                  </>
                 </ListGroup.Item>
               </ListGroup>
             </Col>

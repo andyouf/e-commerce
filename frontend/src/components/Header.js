@@ -29,7 +29,7 @@ const Header = () => {
       <Navbar bg='dark' variant='dark' expand='lg' collapseOnSelect>
         <Container>
           <LinkContainer to='/'>
-            <Navbar.Brand>Andrew Store</Navbar.Brand>
+            <Navbar.Brand>Andrew's Nissan Parts Store</Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
@@ -46,7 +46,7 @@ const Header = () => {
               </LinkContainer>
               <NavDropdown title="Shop" id="shop">
                 {categories && categories.map((category) => (
-                  <LinkContainer to={`/category/${category.name}`} key={category._id}>
+                  <LinkContainer to={`/category/${category._id}`} key={category._id}>
                     <NavDropdown.Item>
                       {category.name}
                     </NavDropdown.Item>
@@ -78,7 +78,10 @@ const Header = () => {
                     <NavDropdown.Item>Products</NavDropdown.Item>
                   </LinkContainer>
                   <LinkContainer to='/admin/categorylist'>
-                    <NavDropdown.Item>Categories</NavDropdown.Item>
+                    <NavDropdown.Item>Brands</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to='/admin/subcategorylist'>
+                    <NavDropdown.Item>Models</NavDropdown.Item>
                   </LinkContainer>
                   <LinkContainer to='/admin/orderlist'>
                     <NavDropdown.Item>Orders</NavDropdown.Item>

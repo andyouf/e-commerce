@@ -1,14 +1,13 @@
-import axios from 'axios'
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Form, Button } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
-import Message from '../components/Message'
-import Loader from '../components/Loader'
-import FormContainer from '../components/FormContainer'
+import Message from '../../components/Message'
+import Loader from '../../components/Loader'
+import FormContainer from '../../components/FormContainer'
 
-import { listCategories, createCategory, updateCategory, listCategoryDetails } from '../actions/categoryActions'
-import { CATEGORY_UPDATE_RESET, CATEGORY_CREATE_RESET } from '../constants/categoryConstants'
+import { createCategory, updateCategory } from '../../actions/categoryActions'
+import { CATEGORY_UPDATE_RESET, CATEGORY_CREATE_RESET } from '../../constants/categoryConstants'
 
 const CategoryEditPage = ({ match, history, isCreate }) => {
   const categoryId = !isCreate && match.params.id
@@ -21,9 +20,10 @@ const CategoryEditPage = ({ match, history, isCreate }) => {
   
   const categoryUpdate = useSelector((state) => state.categoryUpdate)
   const categoryCreate = useSelector((state) => state.categoryCreate)
-  const categoryDetails = useSelector((state) => state.categoryDetails)
-  const { loading, error, category } = categoryDetails
-
+  const { loading, categories, error } = useSelector((state) => state.categoryList)
+  const selectedCategory = React.useMemo(() => {
+    return categories.filter(category => category._id == categoryId)[0]
+  }, [categories, categoryId])
   const {
     loading: loadingUpdate,
     error: errorUpdate,
@@ -37,7 +37,6 @@ const CategoryEditPage = ({ match, history, isCreate }) => {
   } = categoryCreate
 
   useEffect(() => {
-    dispatch(listCategories())
     if(isCreate) {
       if (successCreate) {
         dispatch({ type: CATEGORY_CREATE_RESET })
@@ -48,15 +47,11 @@ const CategoryEditPage = ({ match, history, isCreate }) => {
         dispatch({ type: CATEGORY_UPDATE_RESET })
         history.push('/admin/categorylist')
       } else {
-        if (!category.name || category._id !== categoryId) {
-          dispatch(listCategoryDetails(categoryId))
-        } else {
-          setName(category.name)
-          setDescription(category.description)
-        }
+        setName(selectedCategory.name)
+        setDescription(selectedCategory.description)
       }
     }
-  }, [dispatch, history, categoryId, category, successUpdate, successCreate])
+  }, [dispatch, history, categoryId, selectedCategory, successUpdate, successCreate, isCreate])
 
   const submitHandler = (e) => {
     e.preventDefault()
@@ -84,7 +79,7 @@ const CategoryEditPage = ({ match, history, isCreate }) => {
         Go Back
       </Link>
       <FormContainer>
-        <h1>{isCreate ? 'Create ' : 'Edit '} a Category</h1>
+        <h1>{isCreate ? 'Create ' : 'Edit '} a Brand</h1>
         {(loadingUpdate || loadingCreate) && <Loader />}
         {(errorUpdate || errorCreate) && <Message variant='danger'>{isCreate ? errorCreate : errorUpdate}</Message>}
         {loading ? (

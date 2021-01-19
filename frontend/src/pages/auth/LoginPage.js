@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Form, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
-import Message from '../components/Message'
-import Loader from '../components/Loader'
-import FormContainer from '../components/FormContainer'
-import { login } from '../actions/userActions'
-import SignupProvider from '../components/SignupProvider'
+import Message from '../../components/Message'
+import Loader from '../../components/Loader'
+import FormContainer from '../../components/FormContainer'
+import { login } from '../../actions/userActions'
+import SignupProvider from '../../components/SignupProvider'
 
 const LoginPage = ({ location, history }) => {
   const [email, setEmail] = useState('')
@@ -76,7 +76,7 @@ const LoginPage = ({ location, history }) => {
           xs={{ size: 12, order: 1 }} 
           md={{ size: '6', order: 2 }}
         >
-          <SignupProvider />
+        {/* <SignupProvider /> */}
         </Col>
 
       </FormContainer>

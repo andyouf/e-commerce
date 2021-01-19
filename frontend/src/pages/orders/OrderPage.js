@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Row, Col, ListGroup, Image, Card, Button } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
-import Message from '../components/Message'
-import Loader from '../components/Loader'
+import Message from '../../components/Message'
+import Loader from '../../components/Loader'
 import {
   getOrderDetails,
   deliverOrder,
-} from '../actions/orderActions'
+} from '../../actions/orderActions'
 import {
   ORDER_DELIVER_RESET,
-} from '../constants/orderConstants'
+} from '../../constants/orderConstants'
 
 const OrderPage = ({ match, history }) => {
   const orderId = match.params.id
@@ -56,11 +55,11 @@ const OrderPage = ({ match, history }) => {
             <ListGroup.Item>
               <h2>Shipping</h2>
               <p>
-                <strong>Buyer: </strong> {order.user.name}
+                <strong>Buyer: </strong> {order.user ? order.user.name : 'None'}
               </p>
               <p>
                 <strong>Email: </strong>{' '}
-                <a href={`mailto:${order.user.email}`}>{order.user.email}</a>
+                <a href={`mailto:${order.user ? order.user.email : ''}`}>{order.user ? order.user.email : 'None'}</a>
               </p>
               <p>
                 <strong>Recepient: </strong> {order.recipient}

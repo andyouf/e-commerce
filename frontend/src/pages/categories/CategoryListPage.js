@@ -1,11 +1,10 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { LinkContainer } from 'react-router-bootstrap'
 import { Table, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
-import Message from '../components/Message'
-import Loader from '../components/Loader'
-import Paginate from '../components/Paginate'
-import { listCategories, deleteCategory } from '../actions/categoryActions'
+import Message from '../../components/Message'
+import Loader from '../../components/Loader'
+import { listCategories, deleteCategory } from '../../actions/categoryActions'
 
 const CategoryListPage = ({ history }) => {
 
@@ -42,11 +41,11 @@ const CategoryListPage = ({ history }) => {
     <>
       <Row className='align-items-center'>
         <Col>
-          <h1>Products</h1>
+          <h1>Automobile Brands</h1>
         </Col>
         <Col className='text-right'>
           <Button className='my-3' onClick={createCategoryHandler}>
-            <i className='fas fa-plus'></i> Create Category
+            <i className='fas fa-plus'></i> Create A Brand
           </Button>
         </Col>
       </Row>
@@ -70,7 +69,7 @@ const CategoryListPage = ({ history }) => {
               </tr>
             </thead>
             <tbody>
-              {categories.map((category) => (
+              {categories && categories.map((category) => (
                 <tr key={category._id}>
                   <td>{category._id}</td>
                   <td>{category.name}</td>

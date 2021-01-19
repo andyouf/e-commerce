@@ -2,15 +2,16 @@ import React, { useCallback, useEffect } from 'react'
 import { LinkContainer } from 'react-router-bootstrap'
 import { Table, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
-import Message from '../components/Message'
-import Loader from '../components/Loader'
-import Paginate from '../components/Paginate'
+import Message from '../../components/Message'
+import Loader from '../../components/Loader'
+import Paginate from '../../components/Paginate'
 import {
   listProducts,
   deleteProduct,
-} from '../actions/productActions'
-import { PRODUCT_CREATE_RESET } from '../constants/productConstants'
-import { listCategories } from '../actions/categoryActions'
+} from '../../actions/productActions'
+import { PRODUCT_CREATE_RESET } from '../../constants/productConstants'
+import { listCategories } from '../../actions/categoryActions'
+import { listSubcategories } from '../../actions/subcategoryAction'
 
 const ProductListPage = ({ history, match }) => {
   const pageNumber = match.params.pageNumber || 1
@@ -38,14 +39,22 @@ const ProductListPage = ({ history, match }) => {
   const userLogin = useSelector((state) => state.userLogin)
   const { userInfo } = userLogin
   const { categories } = useSelector((state) => state.categoryList)
+  const { subcategories } = useSelector((state) => state.subcategoryList)
 
   const getCategoryName = useCallback((product) => {
     if(!product.category) return ''
     const category = categories.filter(category => category._id == product.category._id)
     return category[0] && category[0].name
-  }, [products, categories])
+  }, [categories])
+
+  const getSubcategoryName = useCallback((product) => {
+    if(!product.subCategory) return ''
+    const subcategory = subcategories.filter(subcategory => subcategory._id == product.subCategory)
+    console.log(subcategory)
+    return subcategory[0] && subcategory[0].name
+  }, [subcategories])
+
   useEffect(() => {
-    dispatch(listCategories())
     dispatch({ type: PRODUCT_CREATE_RESET })
 
     if (!userInfo || !userInfo.isAdmin) {
@@ -105,8 +114,8 @@ const ProductListPage = ({ history, match }) => {
                 <th>ID</th>
                 <th>NAME</th>
                 <th>PRICE</th>
-                <th>CATEGORY</th>
                 <th>BRAND</th>
+                <th>MODEL</th>
                 <th></th>
               </tr>
             </thead>
@@ -117,7 +126,7 @@ const ProductListPage = ({ history, match }) => {
                   <td>{product.name}</td>
                   <td>${product.price}</td>
                   <td>{getCategoryName(product)}</td>
-                  <td>{product.brand}</td>
+                  <td>{getSubcategoryName(product)}</td>
                   <td>
                     <LinkContainer to={`/admin/product/${product._id}/edit`}>
                       <Button variant='light' className='btn-sm'>
