@@ -2,16 +2,17 @@
   "name": "e-commerce",
   "version": "1.0.0",
   "description": "MERN e-commerce",
-  "main": "index.js",
+  "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node index",
-    "server": "nodemon index",
-    "dev": "concurrently \"npm run index\" \"npm run client\"",
+    "start": "node backend/server.js",
+    "server": "nodemon backend/server.js",
+    "dev": "concurrently \"npm run backend/server\" \"npm run client\"",
     "data:import": "node backend/seeder",
     "data:destroy": "node backend/seeder -d",
     "client": "npm start --prefix frontend",
-    "client:build": "npm run build --prefix frontend"
+    "client:build": "npm run build --prefix frontend",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install npm && run build"
   },
   "author": "Andrew",
   "license": "MIT",
