@@ -12,7 +12,6 @@
     "data:destroy": "node backend/seeder -d",
     "client": "npm start --prefix frontend",
     "client:build": "npm run build --prefix frontend",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install npm && run build"
   },
   "author": "Andrew",
   "license": "MIT",
